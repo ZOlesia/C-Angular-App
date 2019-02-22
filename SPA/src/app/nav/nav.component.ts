@@ -9,12 +9,12 @@ import { AlertifyService } from '../_services/alertify.service';
 })
 export class NavComponent implements OnInit {
   model: any = {};
-  constructor(private authService: AuthService, private alertify: AlertifyService) { }
+  constructor(public authService: AuthService, private alertify: AlertifyService) { }
 
   ngOnInit() {
   }
 
-  login(){
+  login() {
     this.authService.login(this.model).subscribe(next => {
       this.alertify.success('logged in');
     }, error => {
@@ -22,11 +22,11 @@ export class NavComponent implements OnInit {
     });
   }
 
-  loggedIn(){
-    const token = localStorage.getItem('token');
-    return !!token;
+  loggedIn() {
+    return this.authService.loggedin();
   }
-  logout(){
+
+  logout() {
     localStorage.removeItem('token');
     this.alertify.message('logged out');
   }

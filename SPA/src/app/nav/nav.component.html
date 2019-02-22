@@ -17,9 +17,10 @@
 
     <div *ngIf="loggedIn()" class="dropdown">
       <a class="dropdown-toggle text-light">
-        Welcome User
+        Welcome {{authService.decodedToken?.unique_name | titlecase}} <!-- ? - will make unique name optional; titlecase will ensure that the name is in titlecase when displaying on a page  -->
       </a>
     
+      
       <div class="dropdown-menu">
         <a class="dropdown-item" href="#"><i class="fa fa-user"></i> Edit Profile</a>
         <div class="dropdown-divider"></div>
