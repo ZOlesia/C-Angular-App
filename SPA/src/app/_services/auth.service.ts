@@ -25,8 +25,6 @@ login(model: any) {
         if (user) {
           localStorage.setItem('token', user.token); // in order to check if the token is expired
           this.decodedToken = this.jwtHelper.decodeToken(user.token);  // retriving username from the token
-
-          console.log(this.decodedToken);
         }
       })
     );
