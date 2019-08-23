@@ -9,27 +9,27 @@ export class AlertifyService {
   constructor() { }
 
 
-  confirm(message: string, okCallback: () => any){
+  confirm(message: string, okCallback: () => any) {
     alertify.confirm(message, function(e) {
-      if(e){
+      if (e) {
         okCallback();
-      } else {};
-    })
+      } else { }
+    });
   }
 
-  success(message: string){
+  success(message: string) {
     alertify.success(message);
   }
 
-  error(message: string){
+  error(message: string) {
     alertify.error(message);
   }
 
-  warning(message: string){
+  warning(message: string) {
     alertify.warning(message);
   }
 
-  message(message: string){
+  message(message: string) {
     alertify.message(message);
   }
 
