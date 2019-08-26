@@ -22,3 +22,8 @@ export class AuthGuard implements CanActivate {
     return false;
   }
 }
+
+
+// gurd.ts will make sure not to access the website unothirized users => for the routing
+
+

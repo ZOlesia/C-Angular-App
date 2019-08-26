@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using API.Data;
 using API.Helpers;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -35,9 +36,22 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(opt => {
+                    opt.SerializerSettings.ReferenceLoopHandling = 
+                        Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
+                
             services.AddCors();
-            services.AddScoped<IAuthRepository, AuthRepository>();
+
+            services.AddAutoMapper(); //for mapping dtos data to the actual data of class
+
+            services.AddTransient<Seed>(); //  => for seeding dummy data to the db
+
+            services.AddScoped<IAuthRepository, AuthRepository>(); // adding interface and implementation class as a service so it can be usable within the app 
+            services.AddScoped<IDatingRepository, DatingRepository>(); // adding interface and implementation class as a service so it can be usable within the app 
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -50,7 +64,7 @@ namespace API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
         {
             if (env.IsDevelopment())
             {
@@ -74,6 +88,7 @@ namespace API
             }
 
             // app.UseHttpsRedirection();
+            // seeder.SeedUsers(); => adding dummy date to the db throough the UserSeedData.json and Data/Seed.cs files
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseMvc();
