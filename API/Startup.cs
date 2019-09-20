@@ -45,6 +45,8 @@ namespace API
                 
             services.AddCors();
 
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));  //configuring appsettings.json and CloudinarySettings class for Cloudinary cloud provider(photo storage)
+
             services.AddAutoMapper(); //for mapping dtos data to the actual data of class
 
             services.AddTransient<Seed>(); //  => for seeding dummy data to the db
