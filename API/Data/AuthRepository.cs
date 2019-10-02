@@ -19,7 +19,7 @@ namespace API.Data
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
 
             if (user == null)
-                return null;
+                return null; //401 Unauthorized
             
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 return null;
@@ -31,8 +31,8 @@ namespace API.Data
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
             {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)); //computing the parameter password by the passwordSalt that was created when the user Registered, so we can compare passwordHashes by the same salt
+                for (int i = 0; i < computedHash.Length; i++) //since the computedHash is the byte array 
                 {
                     if (computedHash[i] != passwordHash[i]) return false;
                 }
@@ -43,7 +43,7 @@ namespace API.Data
         public async Task<User> Register(User user, string password)
         {
             byte[] passwordHash, passwordSalt;
-            CreatePasswordHash(password, out passwordHash, out passwordSalt); 
+            CreatePasswordHash(password, out passwordHash, out passwordSalt); //converting parameter password  into the password hash and salt
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
@@ -55,12 +55,12 @@ namespace API.Data
             return user;
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt) // out - passing the reference
         {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            using (var hmac = new System.Security.Cryptography.HMACSHA512()) //creating new instance of hmac class which provides us with a randomly generated key which we store as the passwordSalt
             {
                 passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)); //encoding password to get password as a byte array; creates a hash of the password using the randomly generated key
             }
             
         }
