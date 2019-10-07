@@ -8,7 +8,7 @@ import { AlertifyService } from '../_services/alertify.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  @Output() cancelRegister = new EventEmitter();
+  @Output() cancelRegister = new EventEmitter(); // 1st
 
   model: any = {};
 
@@ -25,7 +25,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  cancel() {
+  cancel() { // 2nd
     this.cancelRegister.emit(false);
   }
 }
