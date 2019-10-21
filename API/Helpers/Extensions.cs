@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace API.Helpers
 {
-    public static class Extensions
+    public static class Extensions //as we don't need to create any new instance of this class => static
     {
         public static void AddApplicationError(this HttpResponse response, string message)
         {
             response.Headers.Add("Application-Error", message);
-            response.Headers.Add("Access-Control-Headers", "Application-Error");
+            response.Headers.Add("Access-Control-Expose-Headers", "Application-Error");
             response.Headers.Add("Access-Control-Allow-Origin", "*");
         }
 
