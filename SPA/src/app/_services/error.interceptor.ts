@@ -8,20 +8,20 @@ export class ErrorInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(req).pipe(
             catchError(error => {
-                if(error instanceof HttpErrorResponse){
-                    if(error.status === 401){
-                        return throwError(error.statusText);
-                    }
-                    const applicationError = error.headers.get('Application-Error');
-                    if(applicationError){
-                        console.error(applicationError);
+                if (error.status === 401) {
+                    return throwError(error.statusText);
+                }
+                if (error instanceof HttpErrorResponse) {
+                    const applicationError = error.headers.get('Application-Error'); // has to match with API/Helpers/Extensions.cs
+                    if (applicationError) { // 500 types errors
                         return throwError(applicationError);
                     }
                     const serverError = error.error;
+                    console.log(typeof serverError === 'object');
                     let modalStateErrors = '';
-                    if(serverError && typeof serverError === 'object'){
-                        for(const key in serverError){
-                            if(serverError[key]){
+                    if (serverError && typeof serverError === 'object') {
+                        for (const key in serverError) {
+                            if (serverError[key]) {
                                 modalStateErrors += serverError[key] + '\n';
                             }
                         }
@@ -34,8 +34,8 @@ export class ErrorInterceptor implements HttpInterceptor {
 }
 
 
-export const ErrorInterceptorProvider = {
+export const ErrorInterceptorProvider = {  // adding under providers in app.module.ts
     provide: HTTP_INTERCEPTORS,
     useClass: ErrorInterceptor,
     multi: true
-}
+};
