@@ -15,8 +15,10 @@ export class MemberEditComponent implements OnInit {
 
   @ViewChild('editForm') editForm: NgForm;  // accessing the form editForm in order to reset it to the original untouched condition
   user: User;
+  photoUrl: string;
 
-  // the code below will give a notification when trying to close the window while editing a profile
+  // Host decorator will listen to the host(browser) and take an action based on what is happening inside the browser
+  // will give a notification when trying to close the window while editing a profile
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
     if (this.editForm.dirty) {
@@ -31,6 +33,7 @@ export class MemberEditComponent implements OnInit {
     this.route.data.subscribe(data => {
       this.user = data['user'];
     });
+    this.authService.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
   }
 
   updateUser() {
@@ -42,4 +45,7 @@ export class MemberEditComponent implements OnInit {
     });
   }
 
+  // updateMainPhoto(photoUrl) {
+  //   this.user.photoUrl = photoUrl;
+  // }
 }

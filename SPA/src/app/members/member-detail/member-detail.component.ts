@@ -63,4 +63,4 @@ export class MemberDetailComponent implements OnInit {
 }
 
 
-// /plus will get an id as a string and then convert it to a number
+// + - will get an id as a string and then convert it to a number

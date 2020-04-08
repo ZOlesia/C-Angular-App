@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using API.Models;
 using Newtonsoft.Json;
 
@@ -6,42 +7,34 @@ namespace API.Data
 {
     public class Seed
     {
-        private readonly DataContext _context;
-
-        public Seed(DataContext context)
+        public static void SeedUsers(DataContext context)
         {
-            _context = context;
-        }
-
-        public void SeedUsers()
-        {
-            var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");
-            var users = JsonConvert.DeserializeObject<List<User>>(userData);
-
-            foreach (var user in users)
+            if(context.Users.Any()) 
             {
-                byte[] passwordHash, passwordSalt;
-                CreatePasswordHash("password", out passwordHash, out passwordSalt);
+                var userData = System.IO.File.ReadAllText("Data/UserSeedData.json");
+                var users = JsonConvert.DeserializeObject<List<User>>(userData);
 
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-                user.Username = user.Username.ToLower();
+                foreach (var user in users)
+                {
+                    byte[] passwordHash, passwordSalt;
+                    CreatePasswordHash("password", out passwordHash, out passwordSalt);
 
-                _context.Users.Add(user);
+                    user.PasswordHash = passwordHash;
+                    user.PasswordSalt = passwordSalt;
+                    user.Username = user.Username.ToLower();
+                    context.Users.Add(user);
+                }
+                context.SaveChanges();
             }
-
-            _context.SaveChanges();
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
-            
         }
-
     }
 }
