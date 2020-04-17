@@ -21,7 +21,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getUsers(page?, itemsPerPage?): Observable<PaginatedResult<User[]>> {
+  getUsers(page?, itemsPerPage?, userParams?): Observable<PaginatedResult<User[]>> {
 
     const paginatedResult: PaginatedResult<User[]> = new PaginatedResult<User[]>();
     let params = new HttpParams();
@@ -31,7 +31,16 @@ export class UserService {
       params = params.append('pageSize', itemsPerPage);
     }
 
-    // observe: 'response' => Observable returns the body of the request but since the pagination 
+    if (userParams != null) {
+      params = params.append('minAge', userParams.minAge);
+      params = params.append('maxAge', userParams.maxAge);
+      params = params.append('gender', userParams.gender);
+      params = params.append('orderBy', userParams.orderBy);
+
+
+    }
+
+    // observe: 'response' => Observable returns the body of the request but since the pagination
     // passed through the headers, we need to get access to the response
     return this.http.get<User[]>(this.baseUrl + 'users', { observe: 'response', params})
       .pipe(
